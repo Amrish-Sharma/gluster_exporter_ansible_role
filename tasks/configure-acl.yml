@@ -1,0 +1,21 @@
+---
+
+- name: install ACL package
+  yum:
+    name: ['acl']
+    state: present
+
+- name: ensure cli.log exists
+  shell: touch /var/log/glusterfs/cli.log
+  args:     
+    creates: /var/log/glusterfs/cli.log
+
+- acl:
+    path: '{{ item }}'
+    entity: '{{ prometheus_user }}'
+    etype: user
+    permissions: rw
+    state: present
+  with_items:
+    - /var/run/glusterd.socket
+    - /var/log/glusterfs/cli.log
